@@ -13,76 +13,66 @@ An interactive web application for creating and animating rugby plays with keyfr
 - Mobile and desktop responsive
 - Robust edge case handling and error prevention
 
-## Recent Improvements
+## Live Demo
 
-- **Fixed animation replay bug**: Animation now properly resets state when replaying
-- **Improved speed control**: Changed from "seconds per frame" to intuitive speed multiplier (0.5x - 3x)
-- **Enhanced stability**: Added comprehensive edge case handling for all operations
-- **Better UX**: Disabled controls during animation to prevent conflicts
-- **Null safety**: Added checks to prevent crashes from missing players or keyframes
+Once deployed, your app will be available at:
+```
+https://YOUR-USERNAME.github.io/rugby-play-builder
+```
 
-## Local Development
+## Quick Start
+
+### First Time Setup (ONE TIME ONLY)
+
+See the `setup-once` folder for initial deployment to GitHub Pages.
+
+**Quick version:**
+1. Create a public GitHub repository
+2. Update `homepage` in `package.json` with your username
+3. Run the setup script in `setup-once` folder
+4. Your app goes live!
+
+### Local Development
 
 1. Install dependencies:
 ```bash
 npm install
 ```
 
-2. Start the development server:
+2. Start development server:
 ```bash
 npm start
 ```
+(Note: If port 3000 is taken, see `.env.example` for how to use a different port)
 
 3. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-## Deploy to Netlify
+### Deploy Updates
 
-### Option 1: Deploy via Git (Recommended)
+After making changes to your app:
 
-1. Push this project to a GitHub/GitLab/Bitbucket repository
-2. Log in to [Netlify](https://netlify.com)
-3. Click "Add new site" → "Import an existing project"
-4. Connect your Git provider and select the repository
-5. Netlify will auto-detect the settings from `netlify.toml`
-6. Click "Deploy site"
-
-### Option 2: Deploy via Drag & Drop
-
-1. Build the project locally:
 ```bash
-npm run build
+npm run deploy
 ```
 
-2. Go to [Netlify Drop](https://app.netlify.com/drop)
-3. Drag and drop the `build` folder
-4. Your site will be deployed instantly!
+That's it! Your changes will be live in 1-2 minutes.
 
-### Option 3: Deploy via Netlify CLI
+## Project Structure
 
-1. Install Netlify CLI:
-```bash
-npm install -g netlify-cli
 ```
-
-2. Build the project:
-```bash
-npm run build
+rugby-play-builder/
+├── setup-once/          # Initial deployment scripts (use once, then delete)
+├── public/              # Static files
+│   └── index.html       # HTML template
+├── src/                 # Source code
+│   ├── App.js           # Main app component
+│   ├── index.js         # Entry point
+│   └── index.css        # Styles (including slider styles)
+├── .env.example         # Example environment variables
+├── .gitignore           # Git ignore rules
+├── package.json         # Project config & dependencies
+└── README.md            # This file
 ```
-
-3. Deploy:
-```bash
-netlify deploy --prod --dir=build
-```
-
-## Build Configuration
-
-The project uses Create React App with the following configuration:
-
-- **Build command**: `npm run build`
-- **Publish directory**: `build`
-- **Node version**: 18.x or higher (automatically detected)
-
-These settings are defined in `netlify.toml` and will be automatically applied.
 
 ## Technologies Used
 
@@ -90,14 +80,45 @@ These settings are defined in `netlify.toml` and will be automatically applied.
 - Tailwind CSS (via CDN)
 - Lucide React (icons)
 - HTML5 Canvas API
+- GitHub Pages (hosting)
 
 ## Usage
 
 1. **Add Players**: Click "Attacker" or "Defender" buttons to add players
-2. **Position Players**: Click and drag players to position them
+2. **Position Players**: Click/tap and drag players to position them
 3. **Assign Ball**: Select a player and click "Give Ball"
 4. **Create Keyframes**: Click "Add Keyframe" to create animation frames
-5. **Animate**: Adjust speed and press Play to watch your play unfold
+5. **Animate**: Adjust speed and press Play to watch your play unfold!
+
+## Available Commands
+
+- `npm start` - Start development server
+- `npm run build` - Create production build
+- `npm run deploy` - Deploy to GitHub Pages
+- `npm test` - Run tests (if any)
+
+## Troubleshooting
+
+### Port 3000 Already in Use
+Copy `.env.example` to `.env` and set a different port:
+```
+PORT=3001
+```
+
+### localStorage Error on Startup
+The project is configured to handle Node.js 22+ localStorage requirements.
+If you still see errors, make sure you ran `npm install` to get all dependencies.
+
+### Slider Track Not Visible
+Try:
+1. Hard refresh (Ctrl+Shift+R or Cmd+Shift+R)
+2. Clear browser cache
+3. Try a different browser
+
+### Changes Not Showing After Deploy
+1. Wait 2 minutes for GitHub Pages to update
+2. Hard refresh your browser
+3. Clear browser cache
 
 ## License
 
