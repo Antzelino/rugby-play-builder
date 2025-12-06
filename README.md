@@ -17,7 +17,7 @@ An interactive web application for creating and animating rugby plays with keyfr
 
 Once deployed, your app will be available at:
 ```
-https://antzelino.github.io/rugby-play-builder
+https://YOUR-USERNAME.github.io/rugby-play-builder
 ```
 
 ## Quick Start
