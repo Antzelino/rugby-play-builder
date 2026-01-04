@@ -19,7 +19,16 @@ Once deployed, your app will be available at your GitHub Pages URL (set in `pack
 
 ## Deployment
 
-Deployment instructions are consolidated in [DEPLOY_README.md](DEPLOY_README.md). For initial one-time scripts see `setup-once/INITIAL_SETUP.md`.
+This project is intended to be hosted on GitHub Pages. No local deploy scripts are required — GitHub Pages can serve the built output. To publish manually:
+
+1. Build the app:
+
+```bash
+npm install
+npm run build
+```
+
+2. Push the repository to GitHub and enable GitHub Pages in your repository settings (choose a branch/folder to serve from).
 
 ## Quick Start (Local Development)
 
@@ -32,7 +41,6 @@ npm install
 ```bash
 npm start
 ```
-(Note: If port 3000 is taken, see `.env.example` for how to use a different port)
 
 3. Open [http://localhost:3000](http://localhost:3000) in your browser
 
