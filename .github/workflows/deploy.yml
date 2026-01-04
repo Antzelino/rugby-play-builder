@@ -25,7 +25,7 @@ jobs:
         run: npm install --no-audit --no-fund
 
       - name: Build
-        run: npm run build
+        run: npm run build:ci
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
