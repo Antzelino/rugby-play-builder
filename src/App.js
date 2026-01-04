@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Play, Pause, SkipBack, Plus, Trash2, Users } from 'lucide-react';
 
 const RugbyPlayBuilder = () => {
@@ -71,11 +71,9 @@ const RugbyPlayBuilder = () => {
   // Scale player radius based on canvas size (larger on smaller screens for touch)
   const playerRadius = Math.max(12, Math.min(15, fieldWidth / 53));
 
-  useEffect(() => {
-    drawField();
-  }, [players, keyframes, currentKeyframe, playbackProgress, selectedPlayer, canvasDimensions]);
+  
 
-  const getPlayerPosition = (player, keyframeIndex, progress = 0) => {
+  const getPlayerPosition = useCallback((player, keyframeIndex, progress = 0) => {
     // Safety check
     if (!keyframes[keyframeIndex]) {
       return {
@@ -123,9 +121,9 @@ const RugbyPlayBuilder = () => {
       y: playerPos.y + (nextPos.y - playerPos.y) * progress,
       hasBall: progress < 0.5 ? playerPos.hasBall : nextPos.hasBall
     };
-  };
+  }, [keyframes, fieldWidth, fieldHeight]);
 
-  const drawField = () => {
+  const drawField = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -272,7 +270,11 @@ const RugbyPlayBuilder = () => {
         }
       }
     }
-  };
+  }, [players, keyframes, currentKeyframe, playbackProgress, selectedPlayer, playerRadius, fieldWidth, fieldHeight, getPlayerPosition]);
+
+  useEffect(() => {
+    drawField();
+  }, [drawField]);
 
   const addPlayer = (team) => {
     const newPlayer = {
