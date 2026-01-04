@@ -44,6 +44,14 @@ npm start
 
 3. Open [http://localhost:3000](http://localhost:3000) in your browser
 
+## Recent repository cleanup
+
+- Removed Netlify configuration and one-time deployment scripts; this project is simplified to use GitHub Pages.
+- Added a GitHub Actions workflow to build and deploy the `build/` folder to the `gh-pages` branch on pushes to `main`.
+- Removed the `gh-pages` package and local deploy scripts; CI-based deployment is preferred.
+
+If anything here looks incorrect or you'd like a different deployment approach, tell me and I can adjust.
+
 ## Project Structure
 
 ```
