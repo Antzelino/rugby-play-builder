@@ -15,24 +15,13 @@ An interactive web application for creating and animating rugby plays with keyfr
 
 ## Live Demo
 
-Once deployed, your app will be available at:
-```
-https://YOUR-USERNAME.github.io/rugby-play-builder
-```
+Once deployed, your app will be available at your GitHub Pages URL (set in `package.json` `homepage`).
 
-## Quick Start
+## Deployment
 
-### First Time Setup (ONE TIME ONLY)
+Deployment instructions are consolidated in [DEPLOY_README.md](DEPLOY_README.md). For initial one-time scripts see `setup-once/INITIAL_SETUP.md`.
 
-See the `setup-once` folder for initial deployment to GitHub Pages.
-
-**Quick version:**
-1. Create a public GitHub repository
-2. Update `homepage` in `package.json` with your username
-3. Run the setup script in `setup-once` folder
-4. Your app goes live!
-
-### Local Development
+## Quick Start (Local Development)
 
 1. Install dependencies:
 ```bash
@@ -46,16 +35,6 @@ npm start
 (Note: If port 3000 is taken, see `.env.example` for how to use a different port)
 
 3. Open [http://localhost:3000](http://localhost:3000) in your browser
-
-### Deploy Updates
-
-After making changes to your app:
-
-```bash
-npm run deploy
-```
-
-That's it! Your changes will be live in 1-2 minutes.
 
 ## Project Structure
 
