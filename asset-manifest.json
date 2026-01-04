@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/rugby-play-builder/static/css/main.3020ec2a.css",
-    "main.js": "/rugby-play-builder/static/js/main.b598e8d9.js",
+    "main.js": "/rugby-play-builder/static/js/main.8ceab0ec.js",
     "index.html": "/rugby-play-builder/index.html",
     "main.3020ec2a.css.map": "/rugby-play-builder/static/css/main.3020ec2a.css.map",
-    "main.b598e8d9.js.map": "/rugby-play-builder/static/js/main.b598e8d9.js.map"
+    "main.8ceab0ec.js.map": "/rugby-play-builder/static/js/main.8ceab0ec.js.map"
   },
   "entrypoints": [
     "static/css/main.3020ec2a.css",
-    "static/js/main.b598e8d9.js"
+    "static/js/main.8ceab0ec.js"
   ]
 }
