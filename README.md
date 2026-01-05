@@ -11,150 +11,55 @@ Create an optimized production build:
 npm run build
 ```
 
-This generates a `build/` folder with the production assets.
+# Rugby Play Builder
 
-There is also a `build:ci` script used for CI environments where some local NODE_OPTIONS are not allowed:
+Simple React app built with Vite and deployed to GitHub Pages.
 
-```bash
-npm run build:ci
-```
+## Quick start
+- Install dependencies: `npm install`
+- Local dev server: `npm run start` (Vite)
+- Build production assets: `npm run build` (outputs `dist/`)
+- Preview production build locally: `npm run preview`
+
+The production build is written to `dist/`.
 
 ## Deployment
+This repository uses a GitHub Actions workflow (.github/workflows/deploy.yml) that builds the app and deploys the `dist/` folder to the `gh-pages` branch. The CI workflow uses `npm ci` and Node.js 20.
 
-Two simple deployment options:
+You can also build locally (`npm run build`) and publish `dist/` via GitHub Pages or another host.
 
-- Automatic (recommended): Enable the GitHub Actions workflow at `.github/workflows/deploy.yml`. When present and enabled, it builds the app and deploys the `build/` folder to the `gh-pages` branch on pushes to `main`.
-
-- Manual: Run `npm run build` locally and publish the `build/` folder via GitHub Pages (repository settings) or your preferred hosting provider.
-
-Choose one method — automatic deploy is convenient; manual deploy keeps CI off.
-
-## Project Structure
-
+## Project structure
 ```
 rugby-play-builder/
-├── .github/             # Optional CI workflow (auto-deploy)
-│   └── workflows/
-│       └── deploy.yml
-├── build/               # Generated production build (do not commit)
-├── public/              # Static files (source)
-│   └── index.html
-├── src/                 # Source code
-│   ├── App.js
-│   ├── index.js
+├── .github/                  # CI workflow (auto-deploy)
+├── dist/                     # Generated production build (output of `npm run build`)
+├── src/                      # Source code
+│   ├── App.jsx
+│   ├── main.jsx
 │   └── index.css
-├── .env.example         # Example env vars (optional)
-├── .gitignore
+├── index.html                # Vite root HTML
 ├── package.json
-├── package-lock.json
+├── vite.config.js
+├── postcss.config.cjs
+├── tailwind.config.cjs
 └── README.md
 ```
-
-## Available Commands
-
-- `npm install` — install dependencies
-- `npm start` — start local dev server
-- `npm run build` — build production assets
-- `npm run build:ci` — CI-friendly build (no NODE_OPTIONS)
-
-## Notes on dependencies and security
-
-- The app uses `react-scripts` for build tooling. Running `npm install` may report developer-time vulnerabilities via `npm audit` that come from build tooling. These affect the development/build environment and not the production runtime served to users. If you need help resolving audit findings (reducing them to zero), I can attempt safe upgrades or dependency pinning and test the build.
-
-## Troubleshooting
-
-- Port 3000 already in use: copy `.env.example` to `.env` and set `PORT`.
-- If the dev server or build fails, run `npm install` then `npm run build:ci` and share the error.
-
-## License
-
-MIT
-
-npm start
-```
-
-3. Open [http://localhost:3000](http://localhost:3000) in your browser
-
-## Recent repository cleanup
-
-- Removed Netlify configuration and one-time deployment scripts; this project now targets GitHub Pages only.
-- Added a GitHub Actions workflow (`.github/workflows/deploy.yml`) that builds and deploys `build/` to `gh-pages` on pushes to `main`. This is optional — you can delete the workflow and use manual deploy if you prefer.
-- Removed the `gh-pages` local deploy package and scripts to keep the repo simple.
-
-If you'd like a different deployment flow (manual only, CI off, or GitHub Pages API-based deploy), I can adjust it.
-
-## Project Structure (current)
-
-```
-rugby-play-builder/
-├── .github/             # CI workflow (optional auto-deploy)
-│   └── workflows/
-│       └── deploy.yml
-├── build/               # Generated production build (do not commit)
-├── public/              # Static files (source)
-│   └── index.html
-├── src/                 # Source code
-│   ├── App.js
-│   ├── index.js
-│   └── index.css
-├── .env.example         # Example env vars (optional)
-├── .gitignore
-├── package.json
-├── package-lock.json
-└── README.md
-```
-
-## Technologies Used
-
-- React 18
-- Tailwind CSS (via CDN)
-- Lucide React (icons)
-- HTML5 Canvas API
-- GitHub Pages (hosting)
-
-## Usage
-
-1. **Add Players**: Click "Attacker" or "Defender" buttons to add players
-2. **Position Players**: Click/tap and drag players to position them
-3. **Assign Ball**: Select a player and click "Give Ball"
-4. **Create Keyframes**: Click "Add Keyframe" to create animation frames
-5. **Animate**: Adjust speed and press Play to watch your play unfold!
-
-## Available Commands
-
-- `npm install` — install dependencies
-- `npm start` — start dev server (local development)
-- `npm run build` — create production build locally (uses `NODE_OPTIONS` for local storage workaround)
-- `npm run build:ci` — CI build without `NODE_OPTIONS` (used by the workflow)
-- `npm test` — run tests (if any)
 
 Notes:
-- We removed `npm run deploy`; the repository either uses the GitHub Actions workflow to auto-deploy, or you can deploy the `build/` folder manually to GitHub Pages.
-- The `build/` folder is generated by `npm run build` and should not be committed (it's in `.gitignore`).
+- Tailwind CSS is built at compile time via PostCSS (no CDN in production).
+
+## Scripts
+- `npm run start` — start Vite dev server
+- `npm run build` — build production assets to `dist/`
+- `npm run preview` — locally preview the production build
+
+## CI / GitHub Actions
+- Workflow: `.github/workflows/deploy.yml`
+- Uses Node.js 20 and `npm ci` to install dependencies, runs `npm run build`, and deploys `dist/` to `gh-pages`.
 
 ## Troubleshooting
-
-### Port 3000 Already in Use
-Copy `.env.example` to `.env` and set a different port:
-```
-PORT=3001
-```
-
-### localStorage Error on Startup
-The project is configured to handle Node.js 22+ localStorage requirements.
-If you still see errors, make sure you ran `npm install` to get all dependencies.
-
-### Slider Track Not Visible
-Try:
-1. Hard refresh (Ctrl+Shift+R or Cmd+Shift+R)
-2. Clear browser cache
-3. Try a different browser
-
-### Changes Not Showing After Deploy
-1. Wait 2 minutes for GitHub Pages to update
-2. Hard refresh your browser
-3. Clear browser cache
+- If the dev server fails, run `npm install` and retry `npm run start`.
+- If CI fails on the runner, ensure the workflow uses Node.js 20+.
 
 ## License
-
 MIT
