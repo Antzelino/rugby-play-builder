@@ -1,44 +1,75 @@
-# Rugby Play Builder
+npm start
+```
 
-An interactive web application for creating and animating rugby plays with keyframe-based animation.
+3. Open http://localhost:3000 in your browser.
 
-## Features
+## Build (production)
 
-- Visual rugby field with accurate markings
-- Add attackers and defenders
-- Drag-and-drop player positioning
-- Keyframe animation system with smooth transitions
-- Ball possession tracking with smooth pass animations
-- Adjustable animation speed (0.5x - 3x multiplier)
-- Mobile and desktop responsive
-- Robust edge case handling and error prevention
-
-## Live Demo
-
-Once deployed, your app will be available at your GitHub Pages URL (set in `package.json` `homepage`).
-
-## Deployment
-
-This project is intended to be hosted on GitHub Pages. No local deploy scripts are required — GitHub Pages can serve the built output. To publish manually:
-
-1. Build the app:
+Create an optimized production build:
 
 ```bash
-npm install
 npm run build
 ```
 
-2. Push the repository to GitHub and enable GitHub Pages in your repository settings (choose a branch/folder to serve from).
+This generates a `build/` folder with the production assets.
 
-## Quick Start (Local Development)
+There is also a `build:ci` script used for CI environments where some local NODE_OPTIONS are not allowed:
 
-1. Install dependencies:
 ```bash
-npm install
+npm run build:ci
 ```
 
-2. Start development server:
-```bash
+## Deployment
+
+Two simple deployment options:
+
+- Automatic (recommended): Enable the GitHub Actions workflow at `.github/workflows/deploy.yml`. When present and enabled, it builds the app and deploys the `build/` folder to the `gh-pages` branch on pushes to `main`.
+
+- Manual: Run `npm run build` locally and publish the `build/` folder via GitHub Pages (repository settings) or your preferred hosting provider.
+
+Choose one method — automatic deploy is convenient; manual deploy keeps CI off.
+
+## Project Structure
+
+```
+rugby-play-builder/
+├── .github/             # Optional CI workflow (auto-deploy)
+│   └── workflows/
+│       └── deploy.yml
+├── build/               # Generated production build (do not commit)
+├── public/              # Static files (source)
+│   └── index.html
+├── src/                 # Source code
+│   ├── App.js
+│   ├── index.js
+│   └── index.css
+├── .env.example         # Example env vars (optional)
+├── .gitignore
+├── package.json
+├── package-lock.json
+└── README.md
+```
+
+## Available Commands
+
+- `npm install` — install dependencies
+- `npm start` — start local dev server
+- `npm run build` — build production assets
+- `npm run build:ci` — CI-friendly build (no NODE_OPTIONS)
+
+## Notes on dependencies and security
+
+- The app uses `react-scripts` for build tooling. Running `npm install` may report developer-time vulnerabilities via `npm audit` that come from build tooling. These affect the development/build environment and not the production runtime served to users. If you need help resolving audit findings (reducing them to zero), I can attempt safe upgrades or dependency pinning and test the build.
+
+## Troubleshooting
+
+- Port 3000 already in use: copy `.env.example` to `.env` and set `PORT`.
+- If the dev server or build fails, run `npm install` then `npm run build:ci` and share the error.
+
+## License
+
+MIT
+
 npm start
 ```
 

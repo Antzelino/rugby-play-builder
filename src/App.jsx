@@ -1,9 +1,260 @@
-import App from './App.jsx';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { Play, Pause, SkipBack, Plus, Trash2, Users } from 'lucide-react';
 
-export default App;
-import App from './App.jsx';
+const RugbyPlayBuilder = () => {
+  const [players, setPlayers] = useState([]);
+  const [keyframes, setKeyframes] = useState([{ id: 0, name: 'Start', positions: [] }]);
+  const [currentKeyframe, setCurrentKeyframe] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [playbackProgress, setPlaybackProgress] = useState(0);
+  const [draggingPlayer, setDraggingPlayer] = useState(null);
+  const [selectedPlayer, setSelectedPlayer] = useState(null);
+  const [speedMultiplier, setSpeedMultiplier] = useState(1); // 0.5x to 3x speed
+  const [canvasDimensions, setCanvasDimensions] = useState({ width: 800, height: 500 });
+  const canvasRef = useRef(null);
+  const containerRef = useRef(null);
+  const animationRef = useRef(null);
+  const speedMultiplierRef = useRef(1);
+  const animationStartTimeRef = useRef(null);
+  const progressAtSpeedChangeRef = useRef(0);
+  const lastSpeedRef = useRef(1);
+  const speedChangeTimeRef = useRef(null);
 
-export default App;
+  const aspectRatio = 1.6; // 16:10 aspect ratio (800:500)
+  const baseWidth = 800;
+  const baseHeight = 500;
+  const prevDimensionsRef = useRef({ width: baseWidth, height: baseHeight });
+  
+  // Calculate responsive canvas size
+  useEffect(() => {
+    const updateCanvasSize = () => {
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.offsetWidth;
+        // Max width of 800px, but scale down for smaller screens
+        const width = Math.min(containerWidth - 32, baseWidth); // 32px for padding
+        const height = width / aspectRatio;
+        
+        const newDimensions = { width, height };
+        const prevDimensions = prevDimensionsRef.current;
+        
+        // If dimensions changed and we have players, scale their positions
+        if (players.length > 0 && (prevDimensions.width !== width || prevDimensions.height !== height)) {
+          const scaleX = width / prevDimensions.width;
+          const scaleY = height / prevDimensions.height;
+          
+          // Scale all player positions in all keyframes
+          setKeyframes(prevKeyframes => 
+            prevKeyframes.map(kf => ({
+              ...kf,
+              positions: kf.positions.map(p => ({
+                ...p,
+                x: p.x * scaleX,
+                y: p.y * scaleY
+              }))
+            }))
+          );
+        }
+        
+        prevDimensionsRef.current = newDimensions;
+        setCanvasDimensions(newDimensions);
+      }
+    };
+
+    updateCanvasSize();
+    window.addEventListener('resize', updateCanvasSize);
+    return () => window.removeEventListener('resize', updateCanvasSize);
+  }, [players.length]);
+
+  const fieldWidth = canvasDimensions.width;
+  const fieldHeight = canvasDimensions.height;
+  
+  // Scale player radius based on canvas size (larger on smaller screens for touch)
+  const playerRadius = Math.max(12, Math.min(15, fieldWidth / 53));
+
+  
+
+  const getPlayerPosition = useCallback((player, keyframeIndex, progress = 0) => {
+    // Safety check
+    if (!keyframes[keyframeIndex]) {
+      return {
+        id: player.id,
+        team: player.team,
+        number: player.number,
+        x: fieldWidth / 2,
+        y: fieldHeight / 2,
+        hasBall: false
+      };
+    }
+
+    const keyframe = keyframes[keyframeIndex];
+    const playerPos = keyframe.positions.find(p => p.id === player.id);
+    
+    // If player not found in keyframe, return a default position
+    if (!playerPos) {
+      return {
+        id: player.id,
+        team: player.team,
+        number: player.number,
+        x: fieldWidth / 2,
+        y: fieldHeight / 2,
+        hasBall: false
+      };
+    }
+    
+    if (progress === 0 || keyframeIndex === keyframes.length - 1) {
+      return { ...player, ...playerPos };
+    }
+
+    const nextKeyframe = keyframes[keyframeIndex + 1];
+    if (!nextKeyframe) {
+      return { ...player, ...playerPos };
+    }
+
+    const nextPos = nextKeyframe.positions.find(p => p.id === player.id);
+    
+    if (!nextPos) return { ...player, ...playerPos };
+
+    return {
+      ...player,
+      ...playerPos,
+      x: playerPos.x + (nextPos.x - playerPos.x) * progress,
+      y: playerPos.y + (nextPos.y - playerPos.y) * progress,
+      hasBall: progress < 0.5 ? playerPos.hasBall : nextPos.hasBall
+    };
+  }, [keyframes, fieldWidth, fieldHeight]);
+
+  const drawField = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    
+    canvas.width = fieldWidth * dpr;
+    canvas.height = fieldHeight * dpr;
+    canvas.style.width = `${fieldWidth}px`;
+    canvas.style.height = `${fieldHeight}px`;
+    ctx.scale(dpr, dpr);
+
+    // Field background
+    ctx.fillStyle = '#2d5016';
+    ctx.fillRect(0, 0, fieldWidth, fieldHeight);
+
+    // Field lines
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2;
+
+    // Border
+    ctx.strokeRect(10, 10, fieldWidth - 20, fieldHeight - 20);
+
+    // Center line
+    ctx.beginPath();
+    ctx.moveTo(fieldWidth / 2, 10);
+    ctx.lineTo(fieldWidth / 2, fieldHeight - 10);
+    ctx.stroke();
+
+    // 22m lines
+    ctx.beginPath();
+    ctx.moveTo(fieldWidth * 0.25, 10);
+    ctx.lineTo(fieldWidth * 0.25, fieldHeight - 10);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(fieldWidth * 0.75, 10);
+    ctx.lineTo(fieldWidth * 0.75, fieldHeight - 10);
+    ctx.stroke();
+
+    // 10m lines (dashed)
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(fieldWidth * 0.375, 10);
+    ctx.lineTo(fieldWidth * 0.375, fieldHeight - 10);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(fieldWidth * 0.625, 10);
+    ctx.lineTo(fieldWidth * 0.625, fieldHeight - 10);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw players
+    players.forEach(player => {
+      const pos = getPlayerPosition(player, currentKeyframe, playbackProgress);
+      
+      // Player circle
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, playerRadius, 0, Math.PI * 2);
+      ctx.fillStyle = player.team === 'attack' ? '#ef4444' : '#3b82f6';
+      ctx.fill();
+      
+      // Selection ring
+      if (selectedPlayer === player.id) {
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+      }
+      
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Player number
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 14px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(player.number, pos.x, pos.y);
+    });
+
+    // Draw ball separately so it can animate between players
+    if (keyframes[currentKeyframe] && keyframes[currentKeyframe].positions) {
+      const currentKf = keyframes[currentKeyframe];
+      const playerWithBall = currentKf.positions.find(p => p.hasBall);
+      
+      if (playerWithBall && playbackProgress === 0) {
+        // No animation, just show ball with current player
+        const player = players.find(p => p.id === playerWithBall.id);
+        if (player) {
+          const pos = getPlayerPosition(player, currentKeyframe, 0);
+          
+          ctx.beginPath();
+          ctx.arc(pos.x, pos.y - playerRadius - 8, 5, 0, Math.PI * 2);
+          ctx.fillStyle = '#fbbf24';
+          ctx.fill();
+          ctx.strokeStyle = '#000000';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      } else if (playbackProgress > 0 && currentKeyframe < keyframes.length - 1) {
+        // Animation in progress - interpolate ball position
+        const nextKf = keyframes[currentKeyframe + 1];
+        if (!nextKf || !nextKf.positions) return;
+
+        const currentBallPlayer = currentKf.positions.find(p => p.hasBall);
+        const nextBallPlayer = nextKf.positions.find(p => p.hasBall);
+        
+        if (currentBallPlayer && nextBallPlayer) {
+          const currentPlayer = players.find(p => p.id === currentBallPlayer.id);
+          const nextPlayer = players.find(p => p.id === nextBallPlayer.id);
+          
+          if (currentPlayer && nextPlayer) {
+            const currentPos = getPlayerPosition(currentPlayer, currentKeyframe, 0);
+            const nextPos = getPlayerPosition(nextPlayer, currentKeyframe + 1, 0);
+            
+            // Interpolate ball position
+            const ballX = currentPos.x + (nextPos.x - currentPos.x) * playbackProgress;
+            const ballY = currentPos.y + (nextPos.y - currentPos.y) * playbackProgress - playerRadius - 8;
+            
+            ctx.beginPath();
+            ctx.arc(ballX, ballY, 5, 0, Math.PI * 2);
+            ctx.fillStyle = '#fbbf24';
+            ctx.fill();
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        } else if (currentBallPlayer) {
+          // Ball stays with current player
           const player = players.find(p => p.id === currentBallPlayer.id);
           if (player) {
             const pos = getPlayerPosition(player, currentKeyframe, playbackProgress);
