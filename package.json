@@ -14,6 +14,12 @@
   "devDependencies": {
     "cross-env": "^7.0.3"
   },
+  "overrides": {
+    "nth-check": "^2.0.1",
+    "svgo": "^2.8.0",
+    "postcss": "^8.4.31",
+    "css-select": "^4.1.0"
+  },
   "dependencies": {
     "lucide-react": "^0.263.1",
     "react": "^18.2.0",
